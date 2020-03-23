@@ -49,7 +49,8 @@ class AES: public CipherInterface
 	/* The protected members */
 	protected:
 		/* AES-128 bit ECB Encryption key */
-		unsigned char aes_key[17];
+        unsigned char aes_key[16];
+        AES_KEY enc_key, dec_key;
 };
 
 

@@ -1,6 +1,4 @@
 #include "DES.h"
-#define ENC 1
-#define DEC 0
 /**
  * Sets the key to use
  * @param key - the key to use
@@ -50,7 +48,7 @@ bool DES::setKey(const unsigned char* keyArray)
 	
 	
 	/* Set the encryption key */
-	if ((keyErrorCode = des_set_key_checked(&des_key, this->key)) != 0)
+    if ((keyErrorCode = DES_set_key_checked(&des_key, &key)) != 0)
 	{
 		fprintf(stderr, "\nkey error %d\n", keyErrorCode);
 		
@@ -71,11 +69,14 @@ unsigned char* DES::encrypt(const unsigned char* plaintext)
 	unsigned char cipherText[9]; //ciphertext block
 	memset(cipherText, 0, 9);
 
+    unsigned char plaintextCopy[9];
+    memcpy(&plaintext, plaintextCopy, sizeof(plaintextCopy));
+
 	DES_LONG block[2];
-	block[0] = ctol(plaintext);
-	block[1] = ctol(plaintext + 4);
+    block[0] = ctol(plaintextCopy);
+    block[1] = ctol(plaintextCopy + 4);
 	
-	des_encrypt1(block, this->key, ENC);
+    DES_encrypt1(block, &key, ENC);
 	
 
 	ltoc(block[0], cipherText);
@@ -99,11 +100,14 @@ unsigned char* DES::decrypt(const unsigned char* ciphertext)
 	unsigned char plainText[9]; //ciphertext block
 	memset(plainText, 0, 9);
 
-	DES_LONG block[2];
-	block[0] = ctol(ciphertext);
-	block[1] = ctol(ciphertext + 4);
+    unsigned char ciphertextCopy[9];
+    memcpy(&ciphertext, ciphertextCopy, sizeof(ciphertextCopy));
 
-	des_encrypt1(block, this->key, DEC);
+	DES_LONG block[2];
+    block[0] = ctol(ciphertextCopy);
+    block[1] = ctol(ciphertextCopy + 4);
+
+    DES_encrypt1(block, &key, DEC);
 
 
 	ltoc(block[0], plainText);

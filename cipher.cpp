@@ -6,6 +6,7 @@
 #include "DES.h"
 #include <iostream>
 #include <vector>
+#include <iomanip>
 
 using namespace std;
 
@@ -22,66 +23,66 @@ int main(int argc, char** argv)
 {
 
 	////Testing
-	//CipherInterface* cipher = new DES();
+    CipherInterface* cipher = new DES();
 	//CipherInterface* cipher1 = new AES();
 
-	//validateAndSetKey(cipher, "0123456789abcdef");
+    validateAndSetKey(cipher, "0123456789abcdef");
 	//validateAndSetKey(cipher1, "00112233445566778899aabbccddeeff");
 
-	//performOperation(cipher, "enc", "small.txt", "desencrypt.txt");
-	//performOperation(cipher1, "enc", "small.txt", "aesencrypt.txt");;
+    performOperation(cipher, "enc", "small.txt", "desencrypt.txt", false);
+    //performOperation(cipher1, "enc", "small.txt", "aesencrypt.txt", true);;
 
-	//performOperation(cipher, "enc", "big.txt", "desencrypt.txt");
-	//performOperation(cipher1, "enc", "big.txt", "aesencrypt.txt");
+    //performOperation(cipher, "enc", "big.txt", "desencrypt.txt", false);
+    //performOperation(cipher1, "enc", "big.txt", "aesencrypt.txt", true);
 
-	//performOperation(cipher, "dec", "desencrypt.txt", "desdecrypt.txt");
-	//performOperation(cipher1, "dec", "csencrypt.txt", "aesdecrypt.txt");
+    performOperation(cipher, "dec", "desencrypt.txt", "desdecrypt.txt", false);
+    //performOperation(cipher1, "dec", "csencrypt.txt", "aesdecrypt.txt", true);
 
-	//return 0;
+    return 0;
 
 	/*Make sure we have only 5 command line arguments before moving forward*/
-	if (argc != 6)
-	{
-		cout << "cipher.exe only accepts 5 arguments: <CIPHER NAME> <KEY> <ENC/DEC> <INPUTFILE> <OUTPUT FILE>" << endl;
-		exit(-1);
-	}
+//	if (argc != 6)
+//	{
+//		cout << "cipher.exe only accepts 5 arguments: <CIPHER NAME> <KEY> <ENC/DEC> <INPUTFILE> <OUTPUT FILE>" << endl;
+//		exit(-1);
+//	}
 
-	/*Variables used to parse the command line argument and execute the ciphers dynamically*/
-	string cipherName = argv[1];
-	string key = argv[2];
-	string operation = argv[3];
-	string inputFileName = argv[4];
-	string outputFileName = argv[5];
+//	/*Variables used to parse the command line argument and execute the ciphers dynamically*/
+//	string cipherName = argv[1];
+//	string key = argv[2];
+//	string operation = argv[3];
+//	string inputFileName = argv[4];
+//	string outputFileName = argv[5];
 
-	CipherInterface* cipher = NULL; /*pointer to an instance of our cipher*/
-	bool isAES = false; //false = DES, true = AES
+//	CipherInterface* cipher = NULL; /*pointer to an instance of our cipher*/
+//	bool isAES = false; //false = DES, true = AES
 
-	if (iequals(cipherName, "AES"))
-	{
-		cipher = new AES();
-		isAES = true;
-		if (iequals(operation, "ENC"))
-		{
-			key.insert(0, 1, '1');
-		}
-		else
-		{
-			key.insert(0, 1, '0');
-		}
-	}
-	else if (iequals(cipherName, "DES"))
-	{
-		cipher = new DES();
-	}
-	else
-	{
-		assertValidCipherAssignment(cipher);
-	}
+//	if (iequals(cipherName, "AES"))
+//	{
+//		cipher = new AES();
+//		isAES = true;
+//		if (iequals(operation, "ENC"))
+//		{
+//			key.insert(0, 1, '1');
+//		}
+//		else
+//		{
+//			key.insert(0, 1, '0');
+//		}
+//	}
+//	else if (iequals(cipherName, "DES"))
+//	{
+//		cipher = new DES();
+//	}
+//	else
+//	{
+//		assertValidCipherAssignment(cipher);
+//	}
 
-	validateAndSetKey(cipher, key);
-	performOperation(cipher, operation, inputFileName, outputFileName, isAES);
+//	validateAndSetKey(cipher, key);
+//	performOperation(cipher, operation, inputFileName, outputFileName, isAES);
 
-	return 0;
+//	return 0;
 }
 
 void validateAndSetKey(CipherInterface* const cipher, const string& key)
@@ -145,6 +146,7 @@ void performOperation(CipherInterface* const cipher, const string& operation, co
 					}
 				}
 				plaintextBlock[16] = '\0';
+
 				unsigned char * ciphertextBlockPtr = cipher->encrypt(plaintextBlockPtr); //encrypt block
 				for (int i = 0; i < 16; i++)
 				{
@@ -173,10 +175,11 @@ void performOperation(CipherInterface* const cipher, const string& operation, co
 					}
 				}
 				plaintextBlock[8] = '\0';
+
 				unsigned char * ciphertextBlockPtr = cipher->encrypt(plaintextBlockPtr);
 				for (int i = 0; i < 8; i++)
 				{
-					fileWriter << ciphertextBlockPtr[i];
+                    fileWriter << ciphertextBlockPtr[i];
 				}
 			}
 		}
