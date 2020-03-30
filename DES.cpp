@@ -38,8 +38,6 @@ bool DES::setKey(const unsigned char* keyArray)
 		++desKeyIndex;
 	}
 	
-	fprintf(stdout, "DES KEY: ");
-	
 	/* Print the key */
 	for(keyIndex = 0; keyIndex < 8; ++keyIndex)
 		fprintf(stdout, "%x", this->des_key[keyIndex]);
@@ -66,15 +64,18 @@ bool DES::setKey(const unsigned char* keyArray)
  */
 unsigned char* DES::encrypt(const unsigned char* plaintext)
 {
-	unsigned char cipherText[9]; //ciphertext block
+    unsigned char * cipherText = new unsigned char[9]; //ciphertext block
 	memset(cipherText, 0, 9);
 
-    unsigned char plaintextCopy[9];
-    memcpy(&plaintext, plaintextCopy, sizeof(plaintextCopy));
+    unsigned char plaintextMutableCopy[9];
+    for(int i = 0; i < 9; ++i)
+    {
+        plaintextMutableCopy[i] = plaintext[i];
+    }
 
 	DES_LONG block[2];
-    block[0] = ctol(plaintextCopy);
-    block[1] = ctol(plaintextCopy + 4);
+    block[0] = ctol(plaintextMutableCopy);
+    block[1] = ctol(plaintextMutableCopy + 4);
 	
     DES_encrypt1(block, &key, ENC);
 	
@@ -82,10 +83,7 @@ unsigned char* DES::encrypt(const unsigned char* plaintext)
 	ltoc(block[0], cipherText);
 	ltoc(block[1], cipherText + 4);
 
-	//store the block of ciphertext in a buffer that will be written to the file
-	unsigned char * ciphertextBlockPtr = cipherText;
-
-	return ciphertextBlockPtr;
+    return cipherText;
 }
 
 /**
@@ -97,15 +95,18 @@ unsigned char* DES::decrypt(const unsigned char* ciphertext)
 {
 	//LOGIC:
 	// Same logic as encrypt(), except in step 4. decrypt instead of encrypting
-	unsigned char plainText[9]; //ciphertext block
+    unsigned char * plainText = new unsigned char[9]; //plaintext block
 	memset(plainText, 0, 9);
 
-    unsigned char ciphertextCopy[9];
-    memcpy(&ciphertext, ciphertextCopy, sizeof(ciphertextCopy));
+    unsigned char ciphertextMutableCopy[9];
+    for(int i = 0; i < 9; ++i)
+    {
+        ciphertextMutableCopy[i] = ciphertext[i];
+    }
 
 	DES_LONG block[2];
-    block[0] = ctol(ciphertextCopy);
-    block[1] = ctol(ciphertextCopy + 4);
+    block[0] = ctol(ciphertextMutableCopy);
+    block[1] = ctol(ciphertextMutableCopy + 4);
 
     DES_encrypt1(block, &key, DEC);
 
@@ -113,10 +114,7 @@ unsigned char* DES::decrypt(const unsigned char* ciphertext)
 	ltoc(block[0], plainText);
 	ltoc(block[1], plainText + 4);
 
-	//store the block of ciphertext in a buffer that will be written to the file
-	unsigned char * ciphertextBlockPtr = plainText;
-
-	return ciphertextBlockPtr;
+    return plainText;
 }
 
 /**
